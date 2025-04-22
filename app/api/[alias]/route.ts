@@ -1,9 +1,10 @@
 import { NextRequest } from "next/server";
 import getCollection, { COLLECTION_NAME } from "@/db";
+import type { RouteContext } from "@/types";
 
 export async function GET(
     request: NextRequest,
-    context: { params: { alias: string } }
+    context:RouteContext
   ): Promise<Response> {
     const alias = context.params.alias;
   const collection = await getCollection(COLLECTION_NAME);
