@@ -4,9 +4,9 @@ export async function GET(
   request: Request,
   { params }: { params: { alias: string } }
 ): Promise<Response> {
+  const alias = params.alias;
   const collection = await getCollection(COLLECTION_NAME);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const record = await collection.findOne({ alias: params.alias });
+  const record = await collection.findOne({ alias });
 
   if (!record) {
     return new Response("Alias not found", { status: 404 });
