@@ -1,12 +1,11 @@
 import { NextRequest } from "next/server";
 import getCollection, { COLLECTION_NAME } from "@/db";
-import type { RouteParams } from "next/dist/server/future/route-matches/route-match";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: RouteParams }
+  { params }: { params: { alias: string } }
 ): Promise<Response> {
-  const alias = params.alias as string;
+  const alias = params.alias;
   const collection = await getCollection(COLLECTION_NAME);
   const record = await collection.findOne({ alias });
 
