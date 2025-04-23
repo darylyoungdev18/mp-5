@@ -5,7 +5,7 @@ export async function GET(
   { params }: { params: { alias: string } }
 ): Promise<Response> {
   const collection = await getCollection(COLLECTION_NAME);
-  const record = await collection.findOne({ alias: params.alias });
+  const record = await collection.findOne({ alias: params.alias }); // Use params.alias directly
 
   if (!record) {
     return new Response("Alias not found", { status: 404 });
