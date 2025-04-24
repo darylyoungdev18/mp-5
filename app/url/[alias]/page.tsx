@@ -1,39 +1,17 @@
-import { NextRequest } from "next/server";
-import getCollection, { COLLECTION_NAME } from "@/db";
+// app/url/[alias]/page.tsx
+import getPostById from "@/lib/getPostById";
+import { redirect } from "next/navigation";
 
-function isValidUrl(url: string): boolean {
-  try {
-    const parsed = new URL(url);
-    return ["http:", "https:"].includes(parsed.protocol);
-  } catch {
-    return false;
-  }
-}
+export default async function RedirectAlias({
+  params,
+}: {
+  params: { alias: string };
+}) {
+  const post = await getPostById(params.alias);
 
-export async function POST(request: NextRequest): Promise<Response> {
-  const { url, alias } = await request.json();
-
-  if (!url || !alias) {
-    return new Response(JSON.stringify({ error: "URL and alias are required" }), {
-      status: 400,
-    });
+  if (!post?.url) {
+    return redirect("/");
   }
 
-  if (!isValidUrl(url)) {
-    return new Response(JSON.stringify({ error: "Invalid URL format" }), { status: 400 });
-  }
-
-  const collection = await getCollection(COLLECTION_NAME);
-  const existing = await collection.findOne({ alias });
-
-  if (existing) {
-    return new Response(JSON.stringify({ error: "Alias already exists" }), { status: 409 });
-  }
-
-  await collection.insertOne({ alias, url });
-
-  return new Response(JSON.stringify({ success: true }), {
-    status: 201,
-    headers: { "Content-Type": "application/json" },
-  });
+  return redirect(post.url);
 }
