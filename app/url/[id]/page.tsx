@@ -1,16 +1,12 @@
+import getURLById from "@/lib/getPostById";
 import { redirect } from "next/navigation";
-import getPostById from "@/lib/getPostById";
 
-export default async function Page({
-  params,
-}: {
-  params: { alias: string };
-}) {
-  const post = await getPostById(params.alias);
+export default async function Page({ params }: { params: { id: string } }) {
+  const post = await getURLById(params.id);
 
   if (!post?.url) {
-    redirect("/");
+    return redirect("/");
   }
 
-  redirect(post.url);
+  return redirect(post.url);
 }
