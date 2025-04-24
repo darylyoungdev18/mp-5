@@ -2,11 +2,13 @@
 import getPostById from "@/lib/getPostById";
 import { redirect } from "next/navigation";
 
-export default async function RedirectAlias({
-  params,
-}: {
+import type { Metadata } from "next";
+
+interface RedirectAliasProps {
   params: { alias: string };
-}) {
+}
+
+export default async function RedirectAlias({ params }: RedirectAliasProps) {
   const post = await getPostById(params.alias);
 
   if (!post?.url) {
@@ -15,3 +17,7 @@ export default async function RedirectAlias({
 
   return redirect(post.url);
 }
+
+export const metadata: Metadata = {
+  title: "Redirecting...",
+};
