@@ -1,11 +1,20 @@
 import { NextRequest } from "next/server";
 import getCollection, { COLLECTION_NAME } from "@/db";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { alias: string } }
-): Promise<Response> {
-  const alias = params.alias;
+
+export function GET(
+  request: NextRequest,
+  context: any
+) {
+  
+  const url = new URL(request.url);
+  const pathParts = url.pathname.split('/');
+  const alias = pathParts[pathParts.length - 1];
+  
+  return handleRedirect(alias);
+}
+
+async function handleRedirect(alias: string): Promise<Response> {
   const collection = await getCollection(COLLECTION_NAME);
   const record = await collection.findOne({ alias });
 
