@@ -1,11 +1,19 @@
 import { NextRequest } from "next/server";
 import getCollection, { COLLECTION_NAME } from "@/db";
 
+export const dynamic = 'force-dynamic';
+
+interface Context {
+  params: {
+    alias: string;
+  };
+}
+
 export async function GET(
   request: NextRequest,
-  { params }: { params: { alias: string } }
+  context: Context
 ): Promise<Response> {
-  const alias = params.alias;
+  const alias = context.params.alias;
   const collection = await getCollection(COLLECTION_NAME);
   const record = await collection.findOne({ alias });
 
