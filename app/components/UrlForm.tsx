@@ -18,8 +18,12 @@ export default function UrlForm() {
       const result = await createNewUrl(url, alias, `${base}/url/placeholder`);
       setShortUrl(`${base}/url/${result.id}`);
       setError("");
-    } catch (err: any) {
-      setError(err.message || "Something went wrong");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Something went wrong");
+      }
     }
   };
 
