@@ -1,62 +1,40 @@
 "use client";
 
+import createNewUrl from "@/lib/createNewUrl";
 import { useState } from "react";
 
 export default function UrlForm() {
-  const [url, setUrl] = useState("");
-  const [alias, setAlias] = useState("");
-  const [error, setError] = useState("");
   const [shortUrl, setShortUrl] = useState("");
+  const [error, setError] = useState("");
 
-  async function handleSubmit(e: React.FormEvent) {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError("");
-    setShortUrl("");
+    const formData = new FormData(e.currentTarget);
+    const url = formData.get("url")?.toString() || "";
+    const alias = formData.get("alias")?.toString() || "";
 
-    const res = await fetch("/url", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url, alias }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      setError(data.error || "Something went wrong.");
-    } else {
-      const location = `${window.location.origin}/url/${alias}`;
-      setShortUrl(location);
+    try {
+      const base = window.location.origin;
+      const result = await createNewUrl(url, alias, `${base}/url/placeholder`);
+      setShortUrl(`${base}/url/${result.id}`);
+      setError("");
+    } catch (err: any) {
+      setError(err.message || "Something went wrong");
     }
-  }
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <input
-        type="text"
-        placeholder="Enter URL"
-        value={url}
-        onChange={(e) => setUrl(e.target.value)}
-        className="w-full p-2 border border-gray-300 rounded-md"
-      />
-      <input
-        type="text"
-        placeholder="Enter alias (e.g., mylink)"
-        value={alias}
-        onChange={(e) => setAlias(e.target.value)}
-        className="w-full p-2 border border-gray-300 rounded-md"
-      />
-      <button
-        type="submit"
-        className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
-      >
-        Shorten URL
-      </button>
-      {error && <p className="text-red-600">{error}</p>}
+    <form onSubmit={handleSubmit}>
+      <input name="url" placeholder="Enter long URL" required />
+      <input name="alias" placeholder="Enter alias" required />
+      <button type="submit">Shorten</button>
+
       {shortUrl && (
-        <div className="text-green-600 break-words">
-          Short URL: <a href={shortUrl} className="underline">{shortUrl}</a>
-        </div>
+        <p>
+           Short URL: <a href={shortUrl}>{shortUrl}</a>
+        </p>
       )}
+      {error && <p className="text-red-500">{error}</p>}
     </form>
   );
 }
