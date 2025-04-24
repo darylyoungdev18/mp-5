@@ -1,12 +1,11 @@
 import { NextRequest } from "next/server";
 import getCollection, { COLLECTION_NAME } from "@/db";
 
-
 export async function GET(
   request: NextRequest,
-  { params }: { params: { alias: string } }
+  context: any 
 ): Promise<Response> {
-  const alias = params.alias;
+  const alias = context.params.alias;
   const collection = await getCollection(COLLECTION_NAME);
   const record = await collection.findOne({ alias });
 
