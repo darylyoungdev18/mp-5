@@ -1,23 +1,18 @@
-// app/url/[alias]/page.tsx
-import getPostById from "@/lib/getPostById";
 import { redirect } from "next/navigation";
+import getPostById from "@/lib/getPostById";
 
-import type { Metadata } from "next";
+type PageProps = {
+  params: {
+    alias: string;
+  };
+};
 
-interface RedirectAliasProps {
-  params: { alias: string };
-}
-
-export default async function RedirectAlias({ params }: RedirectAliasProps) {
+export default async function Page({ params }: PageProps) {
   const post = await getPostById(params.alias);
 
   if (!post?.url) {
-    return redirect("/");
+    redirect("/");
   }
 
-  return redirect(post.url);
+  redirect(post.url);
 }
-
-export const metadata: Metadata = {
-  title: "Redirecting...",
-};
